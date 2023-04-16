@@ -1,25 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import "./App.css";
+import RouteProvider from "./modules/components/routes";
+import { UserContext } from "./modules/contexts/userContext";
+import { initiateSDK } from "./sdkFunctions";
 
 function App() {
+  const [currentUser, setCurrentUser] = useState();
+  const [community, setCommunity] = useState();
+  useEffect(() => {
+    initiateSDK(false, "70315a15-92bc-4211-ac9b-03729c6a7ab4", "")
+      // 0d6f9958-a2db-46aa-a4b1-c40d268b767b
+      // initiateSDK(false, "0d6f9958-a2db-46aa-a4b1-c40d268b767b", "")
+      .then((res: any) => {
+        setCommunity(res?.data?.community);
+        setCurrentUser(res?.data?.user);
+        sessionStorage.setItem("communityId", res?.data?.community?.id);
+      })
+      .catch((error) => {
+        // // console.log("Error =>", error);
+      });
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserContext.Provider
+      value={{
+        currentUser,
+        setCurrentUser,
+        community,
+        setCommunity,
+      }}
+    >
+      <RouteProvider />
+    </UserContext.Provider>
   );
 }
 
