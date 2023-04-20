@@ -16,6 +16,8 @@ import GroupAllFeedTile from "../feed-tiles/groupAllFeedTile";
 import { GroupHomeTile } from "../feed-tiles/groupHomeTile";
 import DmTile from "../feed-tiles/dmHomefeedTile";
 import DmMemberTile from "../feed-tiles/DmAllMemberTiles";
+import SearchBarContainer from "../feed-search-bar/searchbarContainer";
+import Searchbar from "../feed-search-bar";
 
 const Feeds: React.FC = () => {
   const [loadMoreHomeFeed, setLoadMoreHomeFeed] = useState<boolean>(true);
@@ -28,6 +30,7 @@ const Feeds: React.FC = () => {
   useFetchFeed(setLoadMoreHomeFeed, setLoadMoreAllFeed);
   return (
     <>
+      <Searchbar />
       <div
         id="home-feed-container"
         className="min-h-[350px] max-h-[400px] overflow-auto border-b border-solid border-[#EEEEEE]"

@@ -423,7 +423,6 @@ export async function requestDM(memberId, communityId) {
 
 export async function canDirectMessage(chatroomId) {
   try {
-    // // console.log(chatroomId);
     let call = await myClient.canDmFeed({
       community_id: sessionStorage.getItem("communityId"),
       req_from: chatroomId,

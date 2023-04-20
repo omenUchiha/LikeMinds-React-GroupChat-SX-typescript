@@ -188,3 +188,12 @@ export async function fetchAllDMFeeds({
     return false;
   }
 }
+
+export const markReadChatroom = async (
+  chatroomId: any,
+  feedList: [],
+  setFeedList: any
+) => {
+  try {
+  } catch (error) {}
+};
