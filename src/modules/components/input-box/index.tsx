@@ -26,6 +26,7 @@ import { useParams } from "react-router-dom";
 import ReplyBox from "./replyContainer";
 import { myClient } from "../../..";
 import InputFieldContext from "../../contexts/inputFieldContext";
+import { INPUT_BOX_DEBOUNCE_TIME } from "../../constants/constants";
 const StyledInputWriteComment = styled(TextField)({
   background: "#F9F9F9",
   borderRadius: "20px",
@@ -65,10 +66,19 @@ function Input({ updateHeight, setBufferMessage }: any) {
 function InputSearchField({ setBufferMessage }: any) {
   const [openReplyBox, setOpenReplyBox] = useState(false);
   const [memberDetailsArray, setMemberDetailsArray] = useState<Array<any>>([]);
+  const [enableInputBox, setEnableInputBox] = useState(false);
   const chatroomContext = useContext(ChatroomContext);
   const inputFieldContext = useContext(InputFieldContext);
   const { messageText, setMessageText } = inputFieldContext;
+  const inputBoxRef = useRef<any>(null);
   const { id = "" } = useParams();
+  useEffect(() => {
+    if (enableInputBox) {
+      setTimeout(() => {
+        setEnableInputBox(false);
+      }, INPUT_BOX_DEBOUNCE_TIME);
+    }
+  });
   useEffect(() => {
     async function getAllMembers() {
       let cont = true;
@@ -99,6 +109,11 @@ function InputSearchField({ setBufferMessage }: any) {
 
     getAllMembers();
   }, [id]);
+  useEffect(() => {
+    if (!!inputBoxRef.current) {
+      inputBoxRef?.current?.focus();
+    }
+  });
 
   let keyObj = {
     enter: false,
@@ -133,7 +148,8 @@ function InputSearchField({ setBufferMessage }: any) {
               chatroomContext,
               parseInt(id),
               inputFieldContext,
-              setBufferMessage
+              setBufferMessage,
+              setEnableInputBox
             );
           }}
           className="absolute right-[8.6%] top-[9.5%] "
@@ -149,6 +165,7 @@ function InputSearchField({ setBufferMessage }: any) {
           <img src={SendIcon} alt="send" />
         </IconButton>
         <MentionsInput
+          disabled={enableInputBox}
           className="mentions"
           spellCheck="false"
           placeholder="Write a Comment..."
@@ -167,12 +184,12 @@ function InputSearchField({ setBufferMessage }: any) {
               setMessageText(newStr);
             } else if (keyObj.enter == true && keyObj.shift == false) {
               e.preventDefault();
-
               sendMessage(
                 chatroomContext,
                 parseInt(id),
                 inputFieldContext,
-                setBufferMessage
+                setBufferMessage,
+                setEnableInputBox
               );
             }
           }}
@@ -184,11 +201,12 @@ function InputSearchField({ setBufferMessage }: any) {
               keyObj.shift = false;
             }
           }}
+          inputRef={inputBoxRef}
         >
           <Mention
             trigger="@"
             data={memberDetailsArray}
-            markup="<<__display__|route://member_profile/__id__?member_id=__id__&community_id=__community__>>"
+            markup="<<__display__|route://member/__id__>>"
             style={{
               backgroundColor: "#daf4fa",
             }}

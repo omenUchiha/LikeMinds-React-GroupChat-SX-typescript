@@ -1,8 +1,7 @@
-import React, { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { myClient } from "../..";
 import { onValue, ref } from "firebase/database";
-import { log } from "../../sdkFunctions";
 
 export function useFirebaseChatConversations(
   getChatroomConversations: any,
@@ -16,7 +15,6 @@ export function useFirebaseChatConversations(
       case "groups": {
         return onValue(query, (snapshot) => {
           if (snapshot.exists()) {
-            log(snapshot.val());
             getChatroomConversations(id, 100).then((res: any) => {
               setBufferMessage(null);
             });
@@ -24,5 +22,5 @@ export function useFirebaseChatConversations(
         });
       }
     }
-  }, []);
+  }, [id]);
 }

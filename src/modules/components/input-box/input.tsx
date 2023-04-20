@@ -25,9 +25,11 @@ const sendMessage = async (
   chatroomContext: chatroomContextType,
   chatroom_id: number,
   inputFieldContext: InputFieldContextType,
-  setBufferMessage: any
+  setBufferMessage: any,
+  setEnableInputBox: any
 ) => {
   try {
+    setEnableInputBox(true);
     const {
       conversationList,
       setConversationList,
@@ -59,7 +61,9 @@ const sendMessage = async (
     setMediaAttachments([]);
     setDocumentAttachments([]);
     // ||||||||||||||||||||||
-
+    if (messageText.trim() === "" && filesArray.length === 0) {
+      return;
+    }
     let config: ConversationCreateData = {
       text: message,
       created_at: Date.now(),

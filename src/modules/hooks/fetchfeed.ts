@@ -39,16 +39,16 @@ export function useFetchFeed(
             });
             break;
           }
-          case "dms": {
+          case "direct-messages": {
             fetchActiveHomeFeeds({
               setFeedList: feedContext.setHomeFeed,
               currentFeedList: feedContext.homeFeed,
               setShouldLoadMore: shouldLoadMoreHome,
             });
             fetchAllDMFeeds({
-              setFeedList: feedContext.setHomeFeed,
-              currentFeedList: feedContext.homeFeed,
-              setShouldLoadMore: shouldLoadMoreHome,
+              setShouldLoadMore: setShouldLoadMoreAll,
+              currentFeedList: feedContext.allFeed,
+              setFeedList: feedContext.setAllFeed,
             });
           }
         }
@@ -61,10 +61,13 @@ export function useFetchFeed(
     async function setFeeds() {
       try {
         const feedcall: any = await getChatRoomDetails(myClient, id);
+        log(id);
         generalContext.setCurrentProfile(feedcall.data);
         generalContext.setCurrentChatroom(feedcall.data.chatroom);
         log(feedcall);
-      } catch (error) {}
+      } catch (error) {
+        log(error);
+      }
     }
 
     if (id != "") {
@@ -160,8 +163,9 @@ export async function fetchActiveHomeFeeds({
 
 export async function fetchAllDMFeeds({
   setShouldLoadMore,
-  setFeedList,
+
   currentFeedList,
+  setFeedList,
 }: fetchAllFeedType) {
   try {
     const currentChatroomLength = currentFeedList.length;
@@ -170,15 +174,17 @@ export async function fetchAllDMFeeds({
       sessionStorage.getItem("communityId"),
       pageNo
     );
-    const chatrooms = call.data.chatrooms;
+    log(call);
+    const chatrooms = call.data.members;
     if (chatrooms.length < 10) {
       setShouldLoadMore(false);
     }
     let newChatrooms = currentFeedList.concat(chatrooms);
+    log(`setting new all dm feed ${newChatrooms}`);
     setFeedList(newChatrooms);
     return true;
   } catch (error) {
-    log(`error under function fetchAllGroupFeed: ${error} `);
+    log(`error under function fetchAllDmFeed: ${error} `);
     return false;
   }
 }

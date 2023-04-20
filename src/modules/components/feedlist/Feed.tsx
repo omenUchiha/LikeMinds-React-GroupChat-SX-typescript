@@ -10,9 +10,12 @@ import {
   fetchActiveGroupFeeds,
   useFetchFeed,
   fetchAllGroupFeeds,
+  fetchActiveHomeFeeds,
 } from "../../hooks/fetchfeed";
 import GroupAllFeedTile from "../feed-tiles/groupAllFeedTile";
 import { GroupHomeTile } from "../feed-tiles/groupHomeTile";
+import DmTile from "../feed-tiles/dmHomefeedTile";
+import DmMemberTile from "../feed-tiles/DmAllMemberTiles";
 
 const Feeds: React.FC = () => {
   const [loadMoreHomeFeed, setLoadMoreHomeFeed] = useState<boolean>(true);
@@ -32,11 +35,19 @@ const Feeds: React.FC = () => {
         <InfiniteScroll
           hasMore={loadMoreHomeFeed}
           next={() => {
-            fetchActiveGroupFeeds({
-              setShouldLoadMore: setLoadMoreHomeFeed,
-              currentFeedList: homeFeed,
-              setFeedList: setHomeFeed,
-            });
+            if (mode == "groups") {
+              fetchActiveGroupFeeds({
+                setShouldLoadMore: setLoadMoreHomeFeed,
+                currentFeedList: homeFeed,
+                setFeedList: setHomeFeed,
+              });
+            } else {
+              fetchActiveHomeFeeds({
+                setShouldLoadMore: setLoadMoreHomeFeed,
+                currentFeedList: homeFeed,
+                setFeedList: setHomeFeed,
+              });
+            }
           }}
           dataLength={homeFeed.length}
           loader={null}
@@ -48,7 +59,6 @@ const Feeds: React.FC = () => {
                 <Link
                   to={groupMainPath + "/" + group?.chatroom?.id}
                   onClick={() => {
-                    log(group);
                     if (id != group.chatroom.id) {
                       generalContext.setShowLoadingBar(true);
                     } else {
@@ -73,8 +83,8 @@ const Feeds: React.FC = () => {
                   </div>
                 </Link>
               );
-            }else{
-              
+            } else {
+              return <DmTile profile={group} />;
             }
           })}
         </InfiniteScroll>
@@ -97,14 +107,18 @@ const Feeds: React.FC = () => {
           }}
         >
           {allFeed.map((group: any, groupIndex) => {
-            return (
-              <GroupAllFeedTile
-                groupTitle={group.header}
-                chatroomId={group.id}
-                followStatus={group.follow_status}
-                key={group.title + groupIndex}
-              />
-            );
+            if (mode == "groups") {
+              return (
+                <GroupAllFeedTile
+                  groupTitle={group.header}
+                  chatroomId={group.id}
+                  followStatus={group.follow_status}
+                  key={group.title + groupIndex}
+                />
+              );
+            } else {
+              return <DmMemberTile profile={group} />;
+            }
           })}
         </InfiniteScroll>
       </div>

@@ -14,14 +14,14 @@ const ChatContainer: React.FC = () => {
   const chatroomContext = useContext(ChatroomContext);
   const [loadMoreConversations, setLoadMoreConversations] = useState(true);
   const [bufferMessage, setBufferMessage] = useState(null);
-  const ref = useRef(null);
   const scrollTop = useRef<HTMLDivElement>(null);
   const generalContext = useContext(GeneralContext);
+  const [pageNo, setPageNo] = useState(1);
   // Update height
   const updateHeight = () => {
     const el = document.getElementById("chat");
     if (el != null) {
-      if (chatroomContext.conversationList.length <= 55) {
+      if (pageNo == 1) {
         el.scrollTop = el.scrollHeight;
         sessionStorage.setItem(
           "currentContainerSize",
@@ -111,6 +111,7 @@ const ChatContainer: React.FC = () => {
   }, [chatroomContext.conversationList]);
   useEffect(() => {
     setNewHeight();
+    setPageNo(1);
   }, [generalContext.currentChatroom.id]);
   // firebase listener
   useFirebaseChatConversations(getChatroomConversations, setBufferMessage);
@@ -131,7 +132,9 @@ const ChatContainer: React.FC = () => {
           let currentHeight = scrollTop?.current?.scrollHeight;
           currentHeight = currentHeight;
           if (current < 200 && current % 150 == 0) {
-            paginateChatroomConversations(id, 50);
+            paginateChatroomConversations(id, 50).then((res) =>
+              setPageNo((p) => p + 1)
+            );
           }
         }}
       >

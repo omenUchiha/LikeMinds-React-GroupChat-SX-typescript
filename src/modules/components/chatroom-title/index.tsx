@@ -6,6 +6,7 @@ import Gap from "../../../styledAccessories/Gap";
 import { MoreOptions } from "../../../styledAccessories/MoreOptions";
 import SearchBar from "../../../styledAccessories/SearchBar";
 import { GeneralContext } from "../../contexts/generalContext";
+import { log } from "../../../sdkFunctions";
 type propsTitle = {
   title: any;
   memberCount?: any;

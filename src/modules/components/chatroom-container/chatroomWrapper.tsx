@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ChatContainer from ".";
 import ChatroomContext from "../../contexts/chatroomContext";
@@ -6,15 +6,26 @@ import { GeneralContext } from "../../contexts/generalContext";
 import Tittle from "../chatroom-title";
 import SelectChatroom from "../select-chatroom";
 import { CircularProgress } from "@mui/material";
+import { UserContext } from "../../contexts/userContext";
+import { log } from "../../../sdkFunctions";
 
 const ChatroomWrapper: React.FC = () => {
   const [conversationList, setConversationList] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState({});
   const [isSelectedConversation, setIsSelectedConversation] = useState(false);
-
   const generalContext = useContext(GeneralContext);
-  const { operation = "" } = useParams();
-
+  const userContext = useContext(UserContext);
+  const { mode, operation = "" } = useParams();
+  function getChatroomDisplayName() {
+    if (mode == "groups") {
+      return;
+    }
+    let currentUserId = userContext?.currentUser?.id;
+    let generalContextUserIds = generalContext?.currentChatroom?.member?.id;
+    if (currentUserId === generalContextUserIds)
+      return generalContext?.currentChatroom?.chatroom_with_user?.name;
+    else return generalContext?.currentChatroom?.member?.name;
+  }
   return (
     <ChatroomContext.Provider
       value={{
@@ -28,8 +39,16 @@ const ChatroomWrapper: React.FC = () => {
     >
       {operation != "" ? (
         <Tittle
-          title={generalContext?.currentChatroom?.header}
-          memberCount={generalContext.currentProfile.participant_count}
+          title={
+            mode === "groups"
+              ? generalContext?.currentChatroom?.header
+              : getChatroomDisplayName()
+          }
+          memberCount={
+            mode == "groups"
+              ? generalContext?.currentProfile?.participant_count
+              : null
+          }
         />
       ) : null}
       {getChatroomComponents(operation)}

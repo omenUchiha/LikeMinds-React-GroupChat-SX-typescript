@@ -28,6 +28,7 @@ export const getChatRoomDetails = async (myClient, chatRoomId) => {
       page: 1,
     };
     const chatRoomResponse = await myClient.getChatroom(params);
+
     // // console.log(chatRoomResponse);
     return jsonReturnHandler(chatRoomResponse, null);
   } catch (error) {
@@ -39,7 +40,6 @@ export const getChatRoomDetails = async (myClient, chatRoomId) => {
 export const getConversationsForGroup = async (optionObject) => {
   try {
     let conversationCall = await myClient.getConversations(optionObject);
-    log(conversationCall);
     return jsonReturnHandler(conversationCall.conversations, null);
   } catch (error) {
     return jsonReturnHandler(null, error);
