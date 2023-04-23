@@ -27,7 +27,12 @@ const Feeds: React.FC = () => {
   const { homeFeed, setHomeFeed, allFeed, setAllFeed } = feedContext;
   const generalContext = useContext(GeneralContext);
   const routeContext = useContext(RouteContext);
-  useFetchFeed(setLoadMoreHomeFeed, setLoadMoreAllFeed);
+  useFetchFeed(
+    setLoadMoreHomeFeed,
+    setLoadMoreAllFeed,
+    loadMoreHomeFeed,
+    loadMoreAllFeed
+  );
   return (
     <>
       <Searchbar />
@@ -64,8 +69,6 @@ const Feeds: React.FC = () => {
                   onClick={() => {
                     if (id != group.chatroom.id) {
                       generalContext.setShowLoadingBar(true);
-                    } else {
-                      markRead(group.chatroom.id);
                     }
                     routeContext.setIsNavigationBoxOpen(
                       !routeContext.isNavigationBoxOpen
@@ -73,17 +76,13 @@ const Feeds: React.FC = () => {
                   }}
                   key={group.chatroom.id + groupIndex + group.chatroom.header}
                 >
-                  <div>
-                    <GroupHomeTile
-                      key={group.chatroom.id + groupIndex}
-                      groupTitle={group.chatroom.header}
-                      chatroomId={group.chatroom.id}
-                      isSecret={group.chatroom.is_secret}
-                      unseenConversationCount={
-                        group.chatroom.unseen_conversation_count
-                      }
-                    />
-                  </div>
+                  <GroupHomeTile
+                    key={group.chatroom.id + groupIndex}
+                    groupTitle={group.chatroom.header}
+                    chatroomId={group.chatroom.id}
+                    isSecret={group.chatroom.is_secret}
+                    unseenConversationCount={group.unseen_conversation_count}
+                  />
                 </Link>
               );
             } else {

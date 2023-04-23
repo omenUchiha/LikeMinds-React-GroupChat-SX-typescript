@@ -1,14 +1,19 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { directMessageChatPath } from "../../../routes";
 import { RouteContext } from "../../contexts/routeContext";
 import { UserContext } from "../../contexts/userContext";
 import { Typography } from "@mui/material";
+import { GeneralContext } from "../../contexts/generalContext";
 
 export default function DmTile({ profile }: any) {
   const userContext = useContext(UserContext);
+  const generalContext = useContext(GeneralContext);
   const { id = "" } = useParams();
   const routeContext = useContext(RouteContext);
+  const [unreadMessages, setUnreadMessages] = useState(
+    profile.unseen_conversation_count
+  );
   return (
     <Link
       key={profile.chatroom.id.toString()}
@@ -17,7 +22,9 @@ export default function DmTile({ profile }: any) {
         textDecoration: "none",
       }}
       onClick={() => {
+        generalContext.setShowLoadingBar(true);
         routeContext.setIsNavigationBoxOpen(!routeContext.isNavigationBoxOpen);
+        setUnreadMessages(0);
       }}
     >
       <div
@@ -45,8 +52,8 @@ export default function DmTile({ profile }: any) {
           className="text-sm font-light"
           sx={{
             color:
-              profile.unseen_conversation_count != undefined
-                ? profile.unseen_conversation_count > 0
+              unreadMessages != undefined
+                ? unreadMessages > 0
                   ? "#3884F7"
                   : "#323232"
                 : profile.unread_messages != undefined
@@ -57,15 +64,7 @@ export default function DmTile({ profile }: any) {
             // display: shouldNotShow ? 'none' : 'inline'
           }}
         >
-          {profile.unseen_conversation_count != undefined ? (
-            profile.unseen_conversation_count > 0 ? (
-              <>{profile.unseen_conversation_count} new messages</>
-            ) : null
-          ) : profile.unread_messages != undefined ? (
-            profile.unread_messages > 0 ? (
-              <>{profile.unread_messages} new messages</>
-            ) : null
-          ) : null}
+          {unreadMessages > 0 ? <>{unreadMessages} new messages</> : null}
         </Typography>
       </div>
     </Link>

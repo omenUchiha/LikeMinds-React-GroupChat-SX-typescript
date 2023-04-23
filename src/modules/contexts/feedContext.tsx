@@ -11,6 +11,7 @@ const FeedContextProvider: React.FC<childrenType> = ({
 }: childrenType) => {
   const [homeFeed, setHomeFeed] = useState<Array<any>>([]);
   const [allFeed, setAllFeed] = useState<Array<any>>([]);
+  const [secretChatrooms, setSecretChatrooms] = useState<Array<any>>([]);
   const [modeCounter, setModeCounter] = useState(0);
   const { mode } = useParams();
   useEffect(() => {
@@ -29,8 +30,10 @@ const FeedContextProvider: React.FC<childrenType> = ({
       value={{
         homeFeed,
         allFeed,
+        secretChatrooms,
         setHomeFeed,
         setAllFeed,
+        setSecretChatrooms,
       }}
     >
       {modeCounter == 1 ? children : null}
@@ -41,15 +44,19 @@ const FeedContextProvider: React.FC<childrenType> = ({
 type feedContext = {
   homeFeed: Array<{}>;
   allFeed: Array<{}>;
+  secretChatrooms: Array<{}>;
   setHomeFeed: React.Dispatch<Array<{}>> | null;
   setAllFeed: React.Dispatch<Array<{}>> | null;
+  setSecretChatrooms: React.Dispatch<Array<{}>> | null;
 };
 
 export const FeedContext = React.createContext<feedContext>({
   homeFeed: [],
   allFeed: [],
+  secretChatrooms: [],
   setHomeFeed: null,
   setAllFeed: null,
+  setSecretChatrooms: null,
 });
 
 export default FeedContextProvider;

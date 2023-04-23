@@ -1,6 +1,6 @@
 import { Close } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { getString } from "../../../sdkFunctions";
 
 type ReplyBoxType = {
@@ -17,7 +17,7 @@ const ReplyBox: React.FC<ReplyBoxType> = ({
   answer,
   setIsSelectedConversation,
   setSelectedConversation,
-}) => {
+}: any) => {
   return (
     <>
       <div

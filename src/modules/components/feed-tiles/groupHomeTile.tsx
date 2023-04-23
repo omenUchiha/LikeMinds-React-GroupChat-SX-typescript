@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 type GroupHomeTileProps = {
@@ -13,12 +14,19 @@ function GroupHomeTile({
   isSecret,
   unseenConversationCount,
 }: GroupHomeTileProps) {
+  const [unreadMessages, setUnreadMessages] = useState<number>(
+    unseenConversationCount
+  );
   const { id } = useParams();
+
   return (
     <div
       className="flex justify-between py-4 px-5 border-[#EEEEEE] border-t-[1px] items-center"
       style={{
         backgroundColor: chatroomId == id ? "#ECF3FF" : "#FFFFFF",
+      }}
+      onClick={() => {
+        setUnreadMessages(0);
       }}
     >
       <Typography
@@ -36,9 +44,9 @@ function GroupHomeTile({
         ) : null}
       </Typography>
 
-      {unseenConversationCount > 0 && chatroomId !== id ? (
+      {unreadMessages > 0 && chatroomId !== id ? (
         <span className="text-[#3884f7] text-xs">
-          {unseenConversationCount} new messages
+          {unreadMessages} new messages
         </span>
       ) : null}
     </div>

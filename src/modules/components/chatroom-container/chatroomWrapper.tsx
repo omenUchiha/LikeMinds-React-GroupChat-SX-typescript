@@ -37,7 +37,7 @@ const ChatroomWrapper: React.FC = () => {
         setIsSelectedConversation,
       }}
     >
-      {operation != "" ? (
+      {operation != "" && generalContext.showLoadingBar == false ? (
         <Tittle
           title={
             mode === "groups"

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getConversationsForGroup, log } from "../../../sdkFunctions";
+import { getConversationsForGroup, log, markRead } from "../../../sdkFunctions";
 import ChatroomContext from "../../contexts/chatroomContext";
 import Input from "../input-box";
 import { DateSpecifier } from "../message-boxes-components";
@@ -102,7 +102,15 @@ const ChatContainer: React.FC = () => {
   };
 
   useEffect(() => {
-    getChatroomConversations(id, 100);
+    async function loadChatAndMarkReadChatroom() {
+      try {
+        await getChatroomConversations(id, 100);
+        await markRead(id);
+      } catch (error) {
+        log(error);
+      }
+    }
+    loadChatAndMarkReadChatroom();
   }, [id]);
 
   useEffect(() => {

@@ -457,6 +457,7 @@ function MoreOptions({ convoId, convoObject }: moreOptionsType) {
     {
       title: "Reply",
       clickFunction: () => {
+        log("clicking reply");
         chatroomContext.setIsSelectedConversation(true);
         chatroomContext.setSelectedConversation(convoObject);
       },
@@ -507,7 +508,7 @@ function MoreOptions({ convoId, convoObject }: moreOptionsType) {
         open={open}
         anchorEl={anchor}
       >
-        {options.map((option, optionIndex) => {
+        {options.map((option) => {
           if (
             option.title === "Report" &&
             (convoObject.member != undefined

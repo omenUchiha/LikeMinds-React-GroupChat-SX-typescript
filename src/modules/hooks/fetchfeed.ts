@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { myClient } from "../..";
 import {
@@ -16,34 +16,49 @@ type feedArrayContent = {
 };
 
 export function useFetchFeed(
-  shouldLoadMoreHome: React.Dispatch<boolean>,
-  setShouldLoadMoreAll: React.Dispatch<boolean>
+  setShouldLoadMoreHome: React.Dispatch<boolean>,
+  setShouldLoadMoreAll: React.Dispatch<boolean>,
+  loadMoreHome: any,
+  loadMoreAll: any
 ) {
   const { mode, operation = "", id = "" } = useParams();
   const feedContext = useContext(FeedContext);
   const generalContext = useContext(GeneralContext);
+  let { homeFeed, allFeed, setHomeFeed, setAllFeed, setSecretChatrooms } =
+    feedContext;
   useEffect(() => {
     async function fetchFeed() {
       try {
         switch (mode) {
           case "groups": {
-            fetchActiveGroupFeeds({
-              setFeedList: feedContext.setHomeFeed,
-              currentFeedList: feedContext.homeFeed,
-              setShouldLoadMore: shouldLoadMoreHome,
-            });
-            fetchAllGroupFeeds({
-              setShouldLoadMore: setShouldLoadMoreAll,
-              currentFeedList: feedContext.allFeed,
-              setFeedList: feedContext.setAllFeed,
-            });
+            // fetchActiveGroupFeeds({
+            //   setFeedList: feedContext.setHomeFeed,
+            //   currentFeedList: feedContext.homeFeed,
+            //   setShouldLoadMore: setShouldLoadMoreHome,
+            // });
+            // fetchAllGroupFeeds({
+            //   setShouldLoadMore: setShouldLoadMoreAll,
+            //   currentFeedList: feedContext.allFeed,
+            //   setFeedList: feedContext.setAllFeed,
+            // });
+            loadGroupFeed(
+              setSecretChatrooms,
+              homeFeed,
+              setHomeFeed,
+              allFeed,
+              setAllFeed,
+              loadMoreHome,
+              setShouldLoadMoreHome,
+              loadMoreAll,
+              setShouldLoadMoreAll
+            );
             break;
           }
           case "direct-messages": {
             fetchActiveHomeFeeds({
               setFeedList: feedContext.setHomeFeed,
               currentFeedList: feedContext.homeFeed,
-              setShouldLoadMore: shouldLoadMoreHome,
+              setShouldLoadMore: setShouldLoadMoreHome,
             });
             fetchAllDMFeeds({
               setShouldLoadMore: setShouldLoadMoreAll,
@@ -189,11 +204,89 @@ export async function fetchAllDMFeeds({
   }
 }
 
-export const markReadChatroom = async (
-  chatroomId: any,
-  feedList: [],
-  setFeedList: any
-) => {
+const getSecretChatroomsInvite = async (setSecretChatrooms: any) => {
   try {
-  } catch (error) {}
+    let pageNo = 1;
+    let shouldCall = true;
+    let res = <any>[];
+    let pageSize = 10;
+    while (shouldCall) {
+      const call = await myClient.getInvites({
+        channel_type: 1,
+        page: pageNo++,
+        page_size: pageSize,
+      });
+      const inviteArray = call.user_invites;
+      res = res.concat(inviteArray);
+      if (inviteArray.length < pageSize) {
+        shouldCall = false;
+      }
+    }
+    setSecretChatrooms(res);
+    // callBack(res.length);
+    return true;
+  } catch (error) {
+    log(error);
+  }
 };
+
+export async function loadGroupFeed(
+  setSecretChatrooms: any,
+  homeFeed: any,
+  setHomeFeed: any,
+  allFeed: any,
+  setAllFeed: any,
+  loadMoreHome: any,
+  setLoadMoreHome: any,
+  loadMoreAll: any,
+  setLoadMoreAll: any
+) {
+  try {
+    const communityId = sessionStorage.getItem("communityId")?.toString() || "";
+    homeFeed = [...homeFeed];
+    allFeed = [...allFeed];
+    let loadUnjoinedBool = false;
+    await getSecretChatroomsInvite(setSecretChatrooms);
+    if (loadMoreHome) {
+      let cRooms = <any>[];
+      for (let i = 0; i < 3; i++) {
+        let feedLength = homeFeed.length;
+        let pgNo =
+          Math.floor(feedLength / 10) + 1 + Math.floor(cRooms.length / 10);
+        let call = await myClient.getHomeFeedData({
+          communityId: communityId,
+          page: pgNo,
+        });
+        cRooms = cRooms.concat(call.my_chatrooms);
+        if (call.my_chatrooms.length < 10) {
+          log("here");
+          setLoadMoreHome(false);
+          setLoadMoreAll(true);
+          loadUnjoinedBool = true;
+          break;
+        }
+      }
+      let newJoinedFeed = homeFeed.concat(cRooms);
+      setHomeFeed(newJoinedFeed);
+    }
+    if (loadMoreAll || loadUnjoinedBool) {
+      log("in the unjoined section");
+      let feedLength = allFeed.length;
+      let pgNo = Math.floor(feedLength / 10) + 1;
+      let call = await myClient.fetchFeedData({
+        community_id: parseInt(communityId),
+        page: pgNo,
+        order_type: 0,
+      });
+      if (call.chatrooms.length < 10) {
+        setLoadMoreAll(false);
+      }
+      let newunJoinedFeed = allFeed.concat(call.chatrooms);
+      setAllFeed(newunJoinedFeed);
+    }
+    return true;
+  } catch (error) {
+    log(error);
+    return false;
+  }
+}

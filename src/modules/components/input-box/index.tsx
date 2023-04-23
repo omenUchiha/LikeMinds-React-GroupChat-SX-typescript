@@ -20,7 +20,7 @@ import { MentionsInput, Mention } from "react-mentions";
 import { Close, Title } from "@mui/icons-material";
 import "./Input.css";
 import ChatroomContext from "../../contexts/chatroomContext";
-import { clearInputFiles, getString } from "../../../sdkFunctions";
+import { clearInputFiles, getString, log } from "../../../sdkFunctions";
 import { sendMessage } from "./input";
 import { useParams } from "react-router-dom";
 import ReplyBox from "./replyContainer";
@@ -64,7 +64,6 @@ function Input({ updateHeight, setBufferMessage }: any) {
 }
 
 function InputSearchField({ setBufferMessage }: any) {
-  const [openReplyBox, setOpenReplyBox] = useState(false);
   const [memberDetailsArray, setMemberDetailsArray] = useState<Array<any>>([]);
   const [enableInputBox, setEnableInputBox] = useState(false);
   const chatroomContext = useContext(ChatroomContext);
@@ -127,11 +126,11 @@ function InputSearchField({ setBufferMessage }: any) {
       }}
     >
       {/* for adding reply */}
-      {chatroomContext.isSelectedConversation?.id != undefined ? (
+      {chatroomContext.isSelectedConversation ? (
         <ReplyBox
-          openReplyBox={openReplyBox}
-          memberName={chatroomContext.selectedConversation.member.name}
-          answer={chatroomContext.selectedConversation.answer}
+          openReplyBox={chatroomContext.isSelectedConversation}
+          memberName={chatroomContext.selectedConversation?.member?.name}
+          answer={chatroomContext.selectedConversation?.answer}
           setIsSelectedConversation={chatroomContext.setIsSelectedConversation}
           setSelectedConversation={chatroomContext.setSelectedConversation}
         />
@@ -248,7 +247,6 @@ function InputSearchField({ setBufferMessage }: any) {
 }
 
 function InputOptions() {
-  const chatroomContext = useContext(ChatroomContext);
   const inputFieldContext = useContext(InputFieldContext);
   const {
     audioAttachments,
