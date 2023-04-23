@@ -49,6 +49,7 @@ const ChatroomWrapper: React.FC = () => {
               ? generalContext?.currentProfile?.participant_count
               : null
           }
+          chatroomUrl={generalContext.chatroomUrl}
         />
       ) : null}
       {getChatroomComponents(operation)}

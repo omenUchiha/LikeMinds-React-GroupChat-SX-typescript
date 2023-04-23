@@ -16,6 +16,7 @@ const Switch: React.FC = () => {
   const [showLoadingBar, setShowLoadingBar] = useState(false);
   const [currentChatroom, setCurrentChatroom] = useState({});
   const [currentProfile, setCurrentProfile] = useState({});
+  const [chatroomUrl, setChatroomUrl] = useState("");
   return (
     <>
       <div className="flex w-[100%] h-[65px] z-10 top-0">
@@ -33,6 +34,8 @@ const Switch: React.FC = () => {
           setCurrentChatroom,
           currentProfile,
           setCurrentProfile,
+          chatroomUrl,
+          setChatroomUrl,
         }}
       >
         <RouteContext.Provider

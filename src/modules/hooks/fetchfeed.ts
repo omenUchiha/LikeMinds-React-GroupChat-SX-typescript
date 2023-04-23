@@ -31,16 +31,6 @@ export function useFetchFeed(
       try {
         switch (mode) {
           case "groups": {
-            // fetchActiveGroupFeeds({
-            //   setFeedList: feedContext.setHomeFeed,
-            //   currentFeedList: feedContext.homeFeed,
-            //   setShouldLoadMore: setShouldLoadMoreHome,
-            // });
-            // fetchAllGroupFeeds({
-            //   setShouldLoadMore: setShouldLoadMoreAll,
-            //   currentFeedList: feedContext.allFeed,
-            //   setFeedList: feedContext.setAllFeed,
-            // });
             loadGroupFeed(
               setSecretChatrooms,
               homeFeed,
@@ -76,10 +66,8 @@ export function useFetchFeed(
     async function setFeeds() {
       try {
         const feedcall: any = await getChatRoomDetails(myClient, id);
-        log(id);
         generalContext.setCurrentProfile(feedcall.data);
         generalContext.setCurrentChatroom(feedcall.data.chatroom);
-        log(feedcall);
       } catch (error) {
         log(error);
       }
@@ -290,3 +278,14 @@ export async function loadGroupFeed(
     return false;
   }
 }
+
+export const invitationResponse = async (channel_id: any, response: any) => {
+  try {
+    const call = await myClient.inviteAction({
+      channel_id: channel_id.toString(),
+      invite_status: response,
+    });
+  } catch (error) {
+    log(error);
+  }
+};

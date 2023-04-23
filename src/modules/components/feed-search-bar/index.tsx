@@ -104,7 +104,7 @@ function Searchbar() {
             setShowSearchContainer(true);
           }}
         />
-        <div className="ml-2">
+        <div className="ml-2 hidden">
           <img src={filterIcon} alt="filter icon" />
         </div>
       </Box>

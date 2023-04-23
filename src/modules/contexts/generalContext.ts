@@ -11,6 +11,8 @@ export const GeneralContext = createContext<{
   setCurrentChatroom: any;
   currentProfile: any;
   setCurrentProfile: any;
+  chatroomUrl: any;
+  setChatroomUrl: any;
 }>({
   showSnackBar: false,
   setSnackBarMessage: () => {},
@@ -22,4 +24,6 @@ export const GeneralContext = createContext<{
   setCurrentChatroom: () => {},
   currentProfile: {},
   setCurrentProfile: null,
+  chatroomUrl: "",
+  setChatroomUrl: null,
 });

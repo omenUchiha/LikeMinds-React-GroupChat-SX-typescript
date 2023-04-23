@@ -53,7 +53,7 @@ export default function GroupAllFeedTile({
       >
         {groupTitle}
       </Typography>
-      {followStatus ? (
+      {!followStatus ? (
         <Button
           variant="outlined"
           className="rounded-[5px]"
